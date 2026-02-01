@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Bee-day Vibes 🐝💖</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ffb6d9, #ffd1ea);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  font-family: "Comic Sans MS", "Segoe UI", sans-serif;
+}
+
+/* FULL WIDTH NOTEPAD */
+.notepad {
+  width: 100%;
+  max-width: 430px;
+  height: 100vh;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  z-index: 2;
+}
+
+.header {
+  background: #ff69b4;
+  color: white;
+  text-align: center;
+  padding: 14px;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+textarea {
+  flex: 1;
+  width: 100%;
+  border: none;
+  outline: none;
+  padding: 18px;
+  font-size: 16px;
+  resize: none;
+  background: repeating-linear-gradient(
+    white,
+    white 28px,
+    #ffe6f2 29px
+  );
+}
+
+/* Buttons */
+.controls {
+  display: flex;
+  justify-content: space-around;
+  padding: 12px;
+  background: #fff0f7;
+}
+
+button {
+  border: none;
+  border-radius: 20px;
+  padding: 10px 14px;
+  background: #ff69b4;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+button:hover { background: #ff1493; }
+
+/* QUIZ MODAL */
+.quiz {
+  position: fixed;
+  inset: 0;
+  background: rgba(255,105,180,0.95);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 5;
+}
+
+.quiz-box {
+  background: white;
+  width: 90%;
+  max-width: 360px;
+  border-radius: 14px;
+  padding: 16px;
+  text-align: center;
+}
+
+.option {
+  background: #ffe6f2;
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 14px;
+  cursor: pointer;
+}
+
+.option:hover { background: #ffb6d9; }
+
+/* 🐝 BEES */
+.bee {
+  position: absolute;
+  font-size: 22px;
+  animation: fly 10s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes fly {
+  0%   { transform: translate(-10vw, 10vh) rotate(0deg); }
+  25%  { transform: translate(30vw, -20vh) rotate(20deg); }
+  50%  { transform: translate(60vw, 30vh) rotate(-20deg); }
+  75%  { transform: translate(90vw, -10vh) rotate(20deg); }
+  100% { transform: translate(110vw, 40vh) rotate(0deg); }
+}
+
+/* Hearts */
+.heart {
+  position: absolute;
+  animation: floatUp 6s linear infinite;
+  font-size: 20px;
+}
+
+@keyframes floatUp {
+  0% { transform: translateY(100vh); opacity: 1; }
+  100% { transform: translateY(-10vh); opacity: 0; }
+}
+</style>
+</head>
+
+<body>
+
+<p>Ravyn Lenae - Love Me Not</p>
+<!-- 🎶 MUSIC -->
+<audio autoplay loop controls>
+  <source src="Ravyn Lenae - Love Me Not.mp3" type="audio/mpeg">
+</audio>
+
+<div class="notepad">
+  <div class="header">🐝 Happy Bee-day 💖</div>
+
+  <textarea>
+Happy Birthday 🐝💕
+
+Beelieve it or not…
+this was made just for you 😌✨
+  </textarea>
+
+  <div class="controls">
+    <button onclick="openQuiz()">🧠 Quiz</button>
+    <button onclick="spawnHearts()">💖 Hearts</button>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="quiz" id="quiz">
+  <div class="quiz-box">
+    <h2 id="question"></h2>
+    <div id="options"></div>
+  </div>
+</div>
+
+<script>
+/* 🐝 CREATE BEES */
+for (let i = 0; i < 6; i++) {
+  let bee = document.createElement("div");
+  bee.className = "bee";
+  bee.innerHTML = "🐝";
+  bee.style.top = Math.random() * 100 + "vh";
+  bee.style.animationDelay = Math.random() * 10 + "s";
+  bee.style.animationDuration = (8 + Math.random() * 6) + "s";
+  document.body.appendChild(bee);
+}
+
+/* HEARTS */
+function spawnHearts() {
+  for (let i = 0; i < 10; i++) {
+    let h = document.createElement("div");
+    h.className = "heart";
+    h.innerHTML = "💖";
+    h.style.left = Math.random() * 100 + "vw";
+    h.style.fontSize = (16 + Math.random() * 20) + "px";
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), 6000);
+  }
+}
+
+/* QUIZ */
+const quizData = [
+  {
+    q: "Pick a birthday vibe 🎂",
+    a: [
+      { text: "Soft & cozy with chicken", vibe: "soft" },
+      { text: "Cute & sweet", vibe: "sweet" },
+      { text: "beef party", vibe: "chaotic" }
+    ]
+  },
+  {
+    q: "Pick a bee trait 🐝",
+    a: [
+      { text: "Gentle", vibe: "soft" },
+      { text: "Social", vibe: "sweet" },
+      { text: "Buzzing everywhere", vibe: "chaotic" }
+    ]
+  }
+];
+
+let qIndex = 0;
+let score = { soft: 0, sweet: 0, chaotic: 0 };
+
+function openQuiz() {
+  document.getElementById("quiz").style.display = "flex";
+  qIndex = 0;
+  score = { soft: 0, sweet: 0, chaotic: 0 };
+  showQ();
+}
+
+function showQ() {
+  const q = quizData[qIndex];
+  document.getElementById("question").innerText = q.q;
+  const opts = document.getElementById("options");
+  opts.innerHTML = "";
+  q.a.forEach(opt => {
+    let d = document.createElement("div");
+    d.className = "option";
+    d.innerText = opt.text;
+    d.onclick = () => {
+      score[opt.vibe]++;
+      qIndex++;
+      qIndex < quizData.length ? showQ() : showResult();
+    };
+    opts.appendChild(d);
+  });
+}
+
+function showResult() {
+  let vibe = Object.keys(score).reduce((a,b)=>score[a]>score[b]?a:b);
+  document.getElementById("question").innerText = "Your Bee-day Vibe 🐝✨";
+  document.getElementById("options").innerHTML =
+    `<p>${vibe.toUpperCase()} ENERGY 💕</p>
+     <button onclick="document.getElementById('quiz').style.display='none'">
+     Close</button>`;
+}
+</script>
+
+</body>
+</html>
